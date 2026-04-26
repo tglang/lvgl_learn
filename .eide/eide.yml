@@ -23,6 +23,7 @@ targets:
       defineList:
         - APM32E10X_HD
         - USB_DEVICE
+        - USE_STDPERIPH_DRIVER
       incList:
         - .
         - User
