@@ -5,6 +5,9 @@
 
 
 
+#include "gpio.h"
+#include "usart.h"
+#include "timer.h"
 
 
 #include "Software.h"

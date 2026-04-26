@@ -1,5 +1,6 @@
 #include "Hardware.h"
 
+TimerCtrl_t TimerCtrl;
 
 int main(void)
 {
