@@ -2,6 +2,9 @@
 #define __Hardware_H__
 
 #include "apm32e10x.h"
+#include "apm32e10x_rcm.h"
+#include "apm32e10x_tmr.h"
+#include "apm32e10x_gpio.h"
 
 
 

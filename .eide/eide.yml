@@ -120,9 +120,24 @@ targets:
         baseAddr: ""
         bin: ""
         cpuInfo:
-          cpuName: "null"
+          cpuName: "APM32E103RET6"
           vendor: "null"
         otherCmds: ""
         proType: 1
         speed: 8000
+      OpenOCD:
+        baseAddr: "0x08000000"
+        bin: ""
+        interface: jlink
+        target: stm32f1x
+      STLink:
+        address: "0x08000000"
+        bin: ""
+        elFile: None
+        optionBytes: .eide/debug.st.option.bytes.ini
+        otherCmds: ""
+        proType: SWD
+        resetMode: default
+        runAfterProgram: true
+        speed: 4000
     uploader: JLink
