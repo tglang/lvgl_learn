@@ -2,8 +2,6 @@
 
 TimerCtrl_t TimerCtrl;
 
-uint8_t i;
-
 int main(void)
 {
     Hardware_initialize();
@@ -22,27 +20,32 @@ int main(void)
         {
             TimerCtrl.Flag_8ms = 0;
 
-
+            KeyCtrl.KeyVaule = KeyScan();
+            if(KeyCtrl.KeyVaule == 1)KeyCtrl.KeyTask = 1;
+            else if (KeyCtrl.KeyVaule == 2)KeyCtrl.KeyTask = 2;
+            else if (KeyCtrl.KeyVaule == 3)KeyCtrl.KeyTask = 3;
+            else if (KeyCtrl.KeyVaule == 4)KeyCtrl.KeyTask = 4;
         }
 
         if(TimerCtrl.Flag_128ms)
         {
             TimerCtrl.Flag_128ms = 0;
 
-            if(i == 0)
+            if(KeyCtrl.KeyTask == 1)LED1_TOGGLE();
+            else if (KeyCtrl.KeyTask == 2)LED2_TOGGLE();
+            else if (KeyCtrl.KeyTask == 3)LED3_TOGGLE();
+            else if (KeyCtrl.KeyTask == 4)
             {
-                GPIO_SetBit(GPIOC, GPIO_PIN_12);
+                LED1_TOGGLE();
+                LED2_TOGGLE();
+                LED3_TOGGLE();
             }
-            else
-            {
-                GPIO_ResetBit(GPIOC, GPIO_PIN_12);
-            }
-            if(++i == 2)i = 0;
         }
 
         if(TimerCtrl.Flag_1024ms)
         {
             TimerCtrl.Flag_1024ms = 0;
+
 
 
         }
@@ -66,5 +69,7 @@ void TMR5_IRQHandler(void)
             TimerCtrl.Flag_1024ms = 1;
             TimerCtrl.Counts = 0;
         }
+
+        if(KeyCtrl.DelayFlag == 1)KeyCtrl.DelayCount++;
     }
 }

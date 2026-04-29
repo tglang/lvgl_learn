@@ -26,5 +26,15 @@ typedef struct
 
 extern TimerCtrl_t TimerCtrl;
 
+typedef struct 
+{
+    uint8_t  DelayFlag;
+    uint16_t DelayCount;
+    uint8_t  KeyVaule;
+    uint8_t  KeyTask;
+}KeyCtrl_t;
+
+extern KeyCtrl_t KeyCtrl;
+
 
 #endif
