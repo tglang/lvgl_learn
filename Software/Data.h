@@ -30,6 +30,7 @@ typedef struct
 {
     uint8_t  DelayFlag;
     uint16_t DelayCount;
+    uint8_t  PowerCount;
     uint8_t  KeyVaule;
     uint8_t  KeyTask;
 }KeyCtrl_t;

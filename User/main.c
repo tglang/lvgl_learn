@@ -21,7 +21,10 @@ int main(void)
             TimerCtrl.Flag_8ms = 0;
 
             KeyCtrl.KeyVaule = KeyScan();
-            if(KeyCtrl.KeyVaule == 1)KeyCtrl.KeyTask = 1;
+            if(KeyCtrl.KeyVaule == 1)
+            {
+                KeyCtrl.KeyTask = 1;
+            }
             else if (KeyCtrl.KeyVaule == 2)KeyCtrl.KeyTask = 2;
             else if (KeyCtrl.KeyVaule == 3)KeyCtrl.KeyTask = 3;
             else if (KeyCtrl.KeyVaule == 4)KeyCtrl.KeyTask = 4;
@@ -31,15 +34,9 @@ int main(void)
         {
             TimerCtrl.Flag_128ms = 0;
 
-            if(KeyCtrl.KeyTask == 1)LED1_TOGGLE();
-            else if (KeyCtrl.KeyTask == 2)LED2_TOGGLE();
-            else if (KeyCtrl.KeyTask == 3)LED3_TOGGLE();
-            else if (KeyCtrl.KeyTask == 4)
-            {
-                LED1_TOGGLE();
-                LED2_TOGGLE();
-                LED3_TOGGLE();
-            }
+            if (KeyCtrl.KeyTask == 2)LED1_TOGGLE();
+            else if (KeyCtrl.KeyTask == 3)LED2_TOGGLE();
+            else if (KeyCtrl.KeyTask == 4)LED3_TOGGLE();
         }
 
         if(TimerCtrl.Flag_1024ms)

@@ -71,11 +71,20 @@ uint8_t KeyScan(void)
             else if(!KEY4)keyValue = 4;
         }
     }
+    else if(KeyUp == 0 && !PWR_SW)
+    {
+        if(++KeyCtrl.PowerCount == 125)//长按1s关机
+        {
+            PWR_CTRL_OFF();
+            KeyCtrl.PowerCount = 0;
+        }
+    }
     else if(KEY2 && KEY3 && KEY4 && PWR_SW)
     {
         KeyUp = 1;
         KeyCtrl.DelayFlag = 0;
         KeyCtrl.DelayCount = 0;
+        KeyCtrl.PowerCount = 0;
     }
 
     return keyValue;
