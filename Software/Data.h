@@ -6,6 +6,9 @@
 #define USART_RX_BUFFER_SIZE 50
 #define USART_TX_BUFFER_SIZE 50
 
+#define BLE_RX_BUFFER_SIZE 50
+#define BLE_TX_BUFFER_SIZE 50
+
 typedef struct 
 {
     uint8_t  RxBuffer[USART_RX_BUFFER_SIZE];
@@ -14,6 +17,15 @@ typedef struct
 }UsartCtrl_t;
 
 extern UsartCtrl_t UsartCtrl;
+
+typedef struct 
+{
+    uint8_t  RxBuffer[BLE_RX_BUFFER_SIZE];
+    uint16_t RxDataSize;
+    uint8_t  TxBuffer[BLE_TX_BUFFER_SIZE];
+}BleCtrl_t;
+
+extern BleCtrl_t BleCtrl;
 
 typedef struct 
 {
