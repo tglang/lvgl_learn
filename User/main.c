@@ -67,6 +67,5 @@ void TMR5_IRQHandler(void)
             TimerCtrl.Counts = 0;
         }
 
-        if(KeyCtrl.DelayFlag == 1)KeyCtrl.DelayCount++;
     }
 }

@@ -21,7 +21,7 @@
 #include "timer.h"
 #include "ch9141k.h"
 #include "w25qxx.h"
-
+#include "lcd1_3.h"
 
 
 #include "Software.h"

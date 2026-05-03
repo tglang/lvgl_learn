@@ -18,13 +18,13 @@ void w25qxx_spi_config(void)
 
     //MISO
     configStruct.pin = W25QXX_MISO_PIN;
-    configStruct.mode = GPIO_MODE_AF_PP;
+    configStruct.mode = GPIO_MODE_IN_FLOATING;
     configStruct.speed = GPIO_SPEED_50MHz;
     GPIO_Config(W25QXX_MISO_PORT, &configStruct);
 
     //SCK
     configStruct.pin = W25QXX_SCK_PIN;
-    configStruct.mode = GPIO_MODE_IN_PU;
+    configStruct.mode = GPIO_MODE_AF_PP;
     GPIO_Config(W25QXX_SCK_PORT, &configStruct);
 
     //MOSI
