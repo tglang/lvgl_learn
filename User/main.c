@@ -7,6 +7,8 @@ int main(void)
     Hardware_initialize();
     Software_initialize();
 
+    //LCD_ShowString(10,35,"2.4 TFT SPI 240*320",RED);
+
     while(1)
     {
         if(TimerCtrl.Flag_1ms)
@@ -33,7 +35,7 @@ int main(void)
         if(TimerCtrl.Flag_128ms)
         {
             TimerCtrl.Flag_128ms = 0;
-
+            if(KeyCtrl.KeyTask == 1)LED1_TOGGLE();
             if (KeyCtrl.KeyTask == 2)LED1_TOGGLE();
             else if (KeyCtrl.KeyTask == 3)LED2_TOGGLE();
             else if (KeyCtrl.KeyTask == 4)LED3_TOGGLE();
@@ -43,7 +45,7 @@ int main(void)
         {
             TimerCtrl.Flag_1024ms = 0;
 
-
+            
 
         }
     }
@@ -66,6 +68,5 @@ void TMR5_IRQHandler(void)
             TimerCtrl.Flag_1024ms = 1;
             TimerCtrl.Counts = 0;
         }
-
     }
 }

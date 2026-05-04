@@ -1,9 +1,93 @@
 #include "lcd1_3.h"
+#include "lcd_fonts.h"
+
+u16 BACK_COLOR = WHITE;   //背景色
 
 void lcd_initialize(void)
 {
     spi_config();
     lcd_gpio_config();
+
+    Lcd_SendCMD(0x36);
+    Lcd_SendData8(0x00);
+    // Lcd_SendData8(0xC0);
+    // Lcd_SendData8(0x70);
+    // Lcd_SendData8(0xA0);
+
+    Lcd_SendCMD(0x3A); 
+    Lcd_SendData8(0x05);
+
+    Lcd_SendCMD(0xB2);
+    Lcd_SendData8(0x0C);
+    Lcd_SendData8(0x0C);
+    Lcd_SendData8(0x00);
+    Lcd_SendData8(0x33);
+    Lcd_SendData8(0x33); 
+
+    Lcd_SendCMD(0xB7); 
+    Lcd_SendData8(0x35);  
+
+    Lcd_SendCMD(0xBB);
+    Lcd_SendData8(0x37);
+
+    Lcd_SendCMD(0xC0);
+    Lcd_SendData8(0x2C);
+
+    Lcd_SendCMD(0xC2);
+    Lcd_SendData8(0x01);
+
+    Lcd_SendCMD(0xC3);
+    Lcd_SendData8(0x12);   
+
+    Lcd_SendCMD(0xC4);
+    Lcd_SendData8(0x20);  
+
+    Lcd_SendCMD(0xC6); 
+    Lcd_SendData8(0x0F);    
+
+    Lcd_SendCMD(0xD0); 
+    Lcd_SendData8(0xA4);
+    Lcd_SendData8(0xA1);
+
+    Lcd_SendCMD(0xE0);
+    Lcd_SendData8(0xD0);
+    Lcd_SendData8(0x04);
+    Lcd_SendData8(0x0D);
+    Lcd_SendData8(0x11);
+    Lcd_SendData8(0x13);
+    Lcd_SendData8(0x2B);
+    Lcd_SendData8(0x3F);
+    Lcd_SendData8(0x54);
+    Lcd_SendData8(0x4C);
+    Lcd_SendData8(0x18);
+    Lcd_SendData8(0x0D);
+    Lcd_SendData8(0x0B);
+    Lcd_SendData8(0x1F);
+    Lcd_SendData8(0x23);
+
+    Lcd_SendCMD(0xE1);
+    Lcd_SendData8(0xD0);
+    Lcd_SendData8(0x04);
+    Lcd_SendData8(0x0C);
+    Lcd_SendData8(0x11);
+    Lcd_SendData8(0x13);
+    Lcd_SendData8(0x2C);
+    Lcd_SendData8(0x3F);
+    Lcd_SendData8(0x44);
+    Lcd_SendData8(0x51);
+    Lcd_SendData8(0x2F);
+    Lcd_SendData8(0x1F);
+    Lcd_SendData8(0x1F);
+    Lcd_SendData8(0x20);
+    Lcd_SendData8(0x23);
+
+    Lcd_SendCMD(0x21); 
+
+    Lcd_SendCMD(0x11); 
+
+    Lcd_SendCMD(0x29); 
+
+    LCD_Clear(WHITE);
 }
 
 void spi_config(void)
@@ -77,6 +161,31 @@ void lcd_gpio_config(void)
     LCD_BLK_HIGH();
 }
 
+void Lcd_SendData8(uint8_t data)
+{
+    LCD_CS_LOW();
+    LCD_DC_DATA();
+
+    while((SPI1->STS & SPI_FLAG_TXBE) == RESET);
+    SPI1->DATA = data;
+    while((SPI1->STS & SPI_FLAG_TXBE) == RESET);
+ 
+    LCD_CS_HIGH();
+}
+
+void Lcd_SendData16(uint16_t data)
+{
+    LCD_CS_LOW();
+    LCD_DC_DATA();
+
+    while((SPI1->STS & SPI_FLAG_TXBE) == RESET);
+    SPI1->DATA = (uint8_t)(data >> 8);
+    while((SPI1->STS & SPI_FLAG_TXBE) == RESET);
+    SPI1->DATA = (uint8_t)(data);
+    while((SPI1->STS & SPI_FLAG_TXBE) == RESET);
+ 
+    LCD_CS_HIGH();
+}
 
 void Lcd_SendDatas(uint8_t *data, uint32_t length)
 {
@@ -96,18 +205,93 @@ void Lcd_SendDatas(uint8_t *data, uint32_t length)
 }
 
 
-void Lcd_SendCMDs(uint8_t *cmd, uint8_t length)
+void Lcd_SendCMD(uint8_t cmd)
 {
     LCD_CS_LOW();
     LCD_DC_CMD();
 
     while((SPI1->STS & SPI_FLAG_TXBE) == RESET);
-    for(int i = 0; i < length; i++)
-    {
-        SPI1->DATA = cmd[i];
-        while((SPI1->STS & SPI_FLAG_TXBE) == RESET);
-    }
+    SPI1->DATA = cmd;
+    while((SPI1->STS & SPI_FLAG_TXBE) == RESET);
 
     LCD_CS_HIGH();
 }
 
+void LCD_Address_Set(u16 x1,u16 y1,u16 x2,u16 y2)
+{
+    Lcd_SendCMD(0x2a);//列地址设置
+    Lcd_SendData16(x1);
+    Lcd_SendData16(x2);
+    Lcd_SendCMD(0x2b);//行地址设置
+    Lcd_SendData16(y1);
+    Lcd_SendData16(y2);
+    Lcd_SendCMD(0x2c);//储存器写
+}
+
+void LCD_Clear(u16 Color)
+{
+    u16 i,j;  	
+    LCD_Address_Set(0,0,LCD_W-1,LCD_H-1);
+    for(i=0;i<LCD_W;i++)
+    {
+        for (j=0;j<LCD_H;j++)
+        {
+            Lcd_SendData16(Color);	 			 
+        }
+    }
+}
+
+void LCD_DrawPoint(u16 x,u16 y,u16 color)
+{
+	LCD_Address_Set(x,y,x,y);//设置光标位置 
+	Lcd_SendData16(color);
+} 
+
+void LCD_ShowChar(u16 x,u16 y,u8 num,u8 mode,u16 color)
+{
+    u8 temp;
+    u8 pos,t;
+	  u16 x0=x;     
+    if(x>LCD_W-16||y>LCD_H-16)return;	    //设置窗口		   
+	num=num-' ';//得到偏移后的值
+	LCD_Address_Set(x,y,x+8-1,y+16-1);      //设置光标位置 
+	if(!mode) //非叠加方式
+	{
+		for(pos=0;pos<16;pos++)
+		{ 
+			temp=asc2_1608[(u16)num*16+pos];		 //调用1608字体
+			for(t=0;t<8;t++)
+		    {                 
+		        if(temp&0x01)Lcd_SendData16(color);
+				    else Lcd_SendData16(BACK_COLOR);
+				    temp>>=1; 
+				    x++;
+		    }
+			x=x0;
+			y++;
+		}	
+	}else//叠加方式
+	{
+		for(pos=0;pos<16;pos++)
+		{
+		    temp=asc2_1608[(u16)num*16+pos];		 //调用1608字体
+			for(t=0;t<8;t++)
+		    {                 
+		        if(temp&0x01)LCD_DrawPoint(x+t,y+pos,color);//画一个点     
+		        temp>>=1; 
+		    }
+		}
+	}   	   	 	  
+}
+
+void LCD_ShowString(u16 x,u16 y,const u8 *p,u16 color)
+{         
+    while(*p!='\0')
+    {       
+        if(x>LCD_W-16){x=0;y+=16;}
+        if(y>LCD_H-16){y=x=0;LCD_Clear(RED);}
+        LCD_ShowChar(x,y,*p,0,color);
+        x+=8;
+        p++;
+    }  
+}
