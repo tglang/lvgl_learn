@@ -7,7 +7,7 @@ int main(void)
     Hardware_initialize();
     Software_initialize();
 
-    //LCD_ShowString(10,35,"2.4 TFT SPI 240*320",RED);
+    LCD_ShowString(10,35,"2.4 TFT SPI 240*320",RED);
 
     while(1)
     {
@@ -68,5 +68,7 @@ void TMR5_IRQHandler(void)
             TimerCtrl.Flag_1024ms = 1;
             TimerCtrl.Counts = 0;
         }
+
+        if(KeyCtrl.DelayFlag == 1)KeyCtrl.DelayCount++;
     }
 }

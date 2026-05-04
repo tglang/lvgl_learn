@@ -114,10 +114,10 @@ void spi_config(void)
 
     LCD_CS_HIGH();
 
-    spiConfig.baudrateDiv = SPI_BAUDRATE_DIV_32;
+    spiConfig.baudrateDiv = SPI_BAUDRATE_DIV_128;
     spiConfig.crcPolynomial = 7;
     spiConfig.direction = SPI_DIRECTION_1LINE_TX;
-    spiConfig.firstBit = SPI_FIRSTBIT_LSB;
+    spiConfig.firstBit = SPI_FIRSTBIT_MSB;
     spiConfig.length = SPI_DATA_LENGTH_8B;
     spiConfig.mode = SPI_MODE_MASTER;
     spiConfig.nss = SPI_NSS_SOFT;
