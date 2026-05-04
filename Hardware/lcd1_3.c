@@ -8,6 +8,8 @@ void lcd_initialize(void)
     spi_config();
     lcd_gpio_config();
 
+    delay_ms(100);
+
     Lcd_SendCMD(0x36);
     Lcd_SendData8(0x00);
     // Lcd_SendData8(0xC0);
@@ -99,7 +101,7 @@ void spi_config(void)
 
     //SCK
     configStruct.pin = LCD_SCL_PIN;
-    configStruct.mode = GPIO_MODE_AF_PP;
+    configStruct.mode = GPIO_MODE_AF_PP;//GPIO_MODE_OUT_PP
     configStruct.speed = GPIO_SPEED_50MHz; 
     GPIO_Config(LCD_SCL_PORT, &configStruct);
 
@@ -114,9 +116,10 @@ void spi_config(void)
 
     LCD_CS_HIGH();
 
-    spiConfig.baudrateDiv = SPI_BAUDRATE_DIV_128;
+    SPI_ConfigStructInit(&spiConfig);
+    spiConfig.baudrateDiv = SPI_BAUDRATE_DIV_64;
     spiConfig.crcPolynomial = 7;
-    spiConfig.direction = SPI_DIRECTION_1LINE_TX;
+    spiConfig.direction = SPI_DIRECTION_2LINES_FULLDUPLEX;
     spiConfig.firstBit = SPI_FIRSTBIT_MSB;
     spiConfig.length = SPI_DATA_LENGTH_8B;
     spiConfig.mode = SPI_MODE_MASTER;
@@ -124,6 +127,11 @@ void spi_config(void)
     spiConfig.phase = SPI_CLKPHA_1EDGE;
     spiConfig.polarity = SPI_CLKPOL_LOW;
     SPI_Config(SPI1, &spiConfig);
+
+    // SPI_SetSoftwareNSS(SPI1);
+    // SPI_DisableCRC(SPI1);
+    // SPI_ConfigDataSize(SPI1, SPI_DATA_LENGTH_8B);
+
     SPI_Enable(SPI1);
 }
 
@@ -161,29 +169,46 @@ void lcd_gpio_config(void)
     LCD_BLK_HIGH();
 }
 
+void LCD_Writ_Bus(u8 dat) 
+{	
+	u8 i;
+	for(i=0;i<8;i++)
+	{			  
+		LCD_SCL_LOW();
+		if(dat&0x80)LCD_DATA_HIGH();
+		else LCD_DATA_LOW();
+		LCD_SCL_HIGH();
+		dat<<=1;   
+	}
+}
+
 void Lcd_SendData8(uint8_t data)
 {
-    LCD_CS_LOW();
     LCD_DC_DATA();
+    LCD_CS_LOW();
 
-    while((SPI1->STS & SPI_FLAG_TXBE) == RESET);
+    
+
+//    LCD_Writ_Bus(data);
+    while(SPI_I2S_ReadStatusFlag(SPI1, SPI_FLAG_TXBE) == RESET);
     SPI1->DATA = data;
-    while((SPI1->STS & SPI_FLAG_TXBE) == RESET);
- 
+    while(SPI_I2S_ReadStatusFlag(SPI1, SPI_FLAG_BSY) == SET);
     LCD_CS_HIGH();
 }
 
 void Lcd_SendData16(uint16_t data)
 {
-    LCD_CS_LOW();
     LCD_DC_DATA();
+    LCD_CS_LOW();
+    
 
-    while((SPI1->STS & SPI_FLAG_TXBE) == RESET);
+    // LCD_Writ_Bus((uint8_t)(data >> 8));
+    // LCD_Writ_Bus((uint8_t)data);
+    while(SPI_I2S_ReadStatusFlag(SPI1, SPI_FLAG_TXBE) == RESET);
     SPI1->DATA = (uint8_t)(data >> 8);
-    while((SPI1->STS & SPI_FLAG_TXBE) == RESET);
-    SPI1->DATA = (uint8_t)(data);
-    while((SPI1->STS & SPI_FLAG_TXBE) == RESET);
- 
+    while(SPI_I2S_ReadStatusFlag(SPI1, SPI_FLAG_BSY) == SET);
+    SPI1->DATA = (uint8_t)data;
+    while(SPI_I2S_ReadStatusFlag(SPI1, SPI_FLAG_BSY) == SET);
     LCD_CS_HIGH();
 }
 
@@ -191,14 +216,15 @@ void Lcd_SendDatas(uint8_t *data, uint32_t length)
 {
     uint32_t i;
 
-    LCD_CS_LOW();
     LCD_DC_DATA();
+    LCD_CS_LOW();
+    
 
-    while((SPI1->STS & SPI_FLAG_TXBE) == RESET);
+    while(SPI_I2S_ReadStatusFlag(SPI1, SPI_FLAG_TXBE) == RESET);
     for(i = 0; i < length; i++)
     {
         SPI1->DATA = data[i];
-        while((SPI1->STS & SPI_FLAG_TXBE) == RESET);
+        while(SPI_I2S_ReadStatusFlag(SPI1, SPI_FLAG_TXBE) == RESET);
     }
  
     LCD_CS_HIGH();
@@ -207,13 +233,14 @@ void Lcd_SendDatas(uint8_t *data, uint32_t length)
 
 void Lcd_SendCMD(uint8_t cmd)
 {
-    LCD_CS_LOW();
     LCD_DC_CMD();
+    LCD_CS_LOW();
 
-    while((SPI1->STS & SPI_FLAG_TXBE) == RESET);
+
+//    LCD_Writ_Bus(cmd);
+    while(SPI_I2S_ReadStatusFlag(SPI1, SPI_FLAG_TXBE) == RESET);
     SPI1->DATA = cmd;
-    while((SPI1->STS & SPI_FLAG_TXBE) == RESET);
-
+    while(SPI_I2S_ReadStatusFlag(SPI1, SPI_FLAG_BSY) == SET);
     LCD_CS_HIGH();
 }
 
