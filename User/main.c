@@ -27,19 +27,41 @@ int main(void)
             {
                 KeyCtrl.KeyTask = 1;
             }
-            else if (KeyCtrl.KeyVaule == 2)KeyCtrl.KeyTask = 2;
-            else if (KeyCtrl.KeyVaule == 3)KeyCtrl.KeyTask = 3;
-            else if (KeyCtrl.KeyVaule == 4)KeyCtrl.KeyTask = 4;
+            else if (KeyCtrl.KeyVaule == 2)
+            {
+                KeyCtrl.KeyTask = 2;
+                LCD_Clear(BLUE);
+            }
+            else if (KeyCtrl.KeyVaule == 3)
+            {
+                KeyCtrl.KeyTask = 3;
+                LCD_Clear(RED);
+            }
+            else if (KeyCtrl.KeyVaule == 4)
+            {
+                KeyCtrl.KeyTask = 4;
+                LCD_Clear(GREEN);
+            }
         }
 
         if(TimerCtrl.Flag_128ms)
         {
             TimerCtrl.Flag_128ms = 0;
             if(KeyCtrl.KeyTask == 1)LED1_TOGGLE();
-            if (KeyCtrl.KeyTask == 2)LED1_TOGGLE();
-            else if (KeyCtrl.KeyTask == 3)LED2_TOGGLE();
-            else if (KeyCtrl.KeyTask == 4)LED3_TOGGLE();
-
+            if (KeyCtrl.KeyTask == 2)
+            {
+                LED1_TOGGLE();
+                
+            }
+            else if (KeyCtrl.KeyTask == 3)
+            {
+                LED2_TOGGLE();
+                
+            }
+            else if (KeyCtrl.KeyTask == 4)
+            {
+                LED3_TOGGLE();
+            }
 
         }
 

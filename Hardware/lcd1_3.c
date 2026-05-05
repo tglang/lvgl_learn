@@ -117,7 +117,7 @@ void spi_config(void)
     LCD_CS_HIGH();
 
     SPI_ConfigStructInit(&spiConfig);
-    spiConfig.baudrateDiv = SPI_BAUDRATE_DIV_64;
+    spiConfig.baudrateDiv = SPI_BAUDRATE_DIV_2;
     spiConfig.crcPolynomial = 7;
     spiConfig.direction = SPI_DIRECTION_2LINES_FULLDUPLEX;
     spiConfig.firstBit = SPI_FIRSTBIT_MSB;
@@ -127,10 +127,6 @@ void spi_config(void)
     spiConfig.phase = SPI_CLKPHA_1EDGE;
     spiConfig.polarity = SPI_CLKPOL_LOW;
     SPI_Config(SPI1, &spiConfig);
-
-    // SPI_SetSoftwareNSS(SPI1);
-    // SPI_DisableCRC(SPI1);
-    // SPI_ConfigDataSize(SPI1, SPI_DATA_LENGTH_8B);
 
     SPI_Enable(SPI1);
 }
@@ -169,27 +165,11 @@ void lcd_gpio_config(void)
     LCD_BLK_HIGH();
 }
 
-void LCD_Writ_Bus(u8 dat) 
-{	
-	u8 i;
-	for(i=0;i<8;i++)
-	{			  
-		LCD_SCL_LOW();
-		if(dat&0x80)LCD_DATA_HIGH();
-		else LCD_DATA_LOW();
-		LCD_SCL_HIGH();
-		dat<<=1;   
-	}
-}
-
 void Lcd_SendData8(uint8_t data)
 {
     LCD_DC_DATA();
     LCD_CS_LOW();
 
-    
-
-//    LCD_Writ_Bus(data);
     while(SPI_I2S_ReadStatusFlag(SPI1, SPI_FLAG_TXBE) == RESET);
     SPI1->DATA = data;
     while(SPI_I2S_ReadStatusFlag(SPI1, SPI_FLAG_BSY) == SET);
@@ -200,10 +180,7 @@ void Lcd_SendData16(uint16_t data)
 {
     LCD_DC_DATA();
     LCD_CS_LOW();
-    
 
-    // LCD_Writ_Bus((uint8_t)(data >> 8));
-    // LCD_Writ_Bus((uint8_t)data);
     while(SPI_I2S_ReadStatusFlag(SPI1, SPI_FLAG_TXBE) == RESET);
     SPI1->DATA = (uint8_t)(data >> 8);
     while(SPI_I2S_ReadStatusFlag(SPI1, SPI_FLAG_BSY) == SET);
@@ -218,7 +195,6 @@ void Lcd_SendDatas(uint8_t *data, uint32_t length)
 
     LCD_DC_DATA();
     LCD_CS_LOW();
-    
 
     while(SPI_I2S_ReadStatusFlag(SPI1, SPI_FLAG_TXBE) == RESET);
     for(i = 0; i < length; i++)
@@ -236,8 +212,6 @@ void Lcd_SendCMD(uint8_t cmd)
     LCD_DC_CMD();
     LCD_CS_LOW();
 
-
-//    LCD_Writ_Bus(cmd);
     while(SPI_I2S_ReadStatusFlag(SPI1, SPI_FLAG_TXBE) == RESET);
     SPI1->DATA = cmd;
     while(SPI_I2S_ReadStatusFlag(SPI1, SPI_FLAG_BSY) == SET);
@@ -278,7 +252,8 @@ void LCD_ShowChar(u16 x,u16 y,u8 num,u8 mode,u16 color)
 {
     u8 temp;
     u8 pos,t;
-	  u16 x0=x;     
+	u16 x0=x;  
+
     if(x>LCD_W-16||y>LCD_H-16)return;	    //设置窗口		   
 	num=num-' ';//得到偏移后的值
 	LCD_Address_Set(x,y,x+8-1,y+16-1);      //设置光标位置 
@@ -290,9 +265,9 @@ void LCD_ShowChar(u16 x,u16 y,u8 num,u8 mode,u16 color)
 			for(t=0;t<8;t++)
 		    {                 
 		        if(temp&0x01)Lcd_SendData16(color);
-				    else Lcd_SendData16(BACK_COLOR);
-				    temp>>=1; 
-				    x++;
+				else Lcd_SendData16(BACK_COLOR);
+				temp>>=1; 
+				x++;
 		    }
 			x=x0;
 			y++;
