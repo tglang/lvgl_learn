@@ -4,9 +4,7 @@
 void Hardware_initialize(void)
 {
     clock_initialize();
-
     delay_ms(50);
-
     gpio_initialize();
     usart_initialize();
     //ch9141k_initializes();

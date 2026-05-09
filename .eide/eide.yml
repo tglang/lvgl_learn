@@ -9,6 +9,7 @@ srcDirs:
   - Library
   - Hardware
   - Software
+  - lvgl-8.3.11
 virtualFolder:
   name: <virtual_root>
   files: []
@@ -31,6 +32,15 @@ targets:
         - Library
         - Hardware
         - Software
+        - lvgl-8.3.11
+        - lvgl-8.3.11/porting
+        - lvgl-8.3.11/src/core
+        - lvgl-8.3.11/src/draw
+        - lvgl-8.3.11/src/extra
+        - lvgl-8.3.11/src/font
+        - lvgl-8.3.11/src/hal
+        - lvgl-8.3.11/src/misc
+        - lvgl-8.3.11/src/widgets
       libList: []
     excludeList: []
     settings:

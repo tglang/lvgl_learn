@@ -96,7 +96,9 @@ void spi_config(void)
 {
     GPIO_Config_T configStruct;
     SPI_Config_T  spiConfig;
+    DMA_Config_T DMA_ConfigStruct;
 
+    RCM_EnableAHBPeriphClock(RCM_AHB_PERIPH_DMA1);
     RCM_EnableAPB2PeriphClock(RCM_APB2_PERIPH_SPI1 | RCM_APB2_PERIPH_GPIOA);
 
     //SCK
@@ -128,6 +130,20 @@ void spi_config(void)
     spiConfig.polarity = SPI_CLKPOL_LOW;
     SPI_Config(SPI1, &spiConfig);
 
+    
+    DMA_ConfigStruct.dir = DMA_DIR_PERIPHERAL_DST;
+    DMA_ConfigStruct.loopMode = DMA_MODE_NORMAL;
+    DMA_ConfigStruct.M2M = DMA_M2MEN_DISABLE;
+    DMA_ConfigStruct.memoryDataSize = DMA_MEMORY_DATA_SIZE_BYTE;
+    DMA_ConfigStruct.memoryInc = DMA_MEMORY_INC_ENABLE;
+    DMA_ConfigStruct.peripheralBaseAddr = (uint32_t)&SPI1->DATA;
+    DMA_ConfigStruct.peripheralDataSize = DMA_PERIPHERAL_DATA_SIZE_BYTE;
+    DMA_ConfigStruct.peripheralInc = DMA_PERIPHERAL_INC_DISABLE;
+    DMA_ConfigStruct.priority = DMA_PRIORITY_VERYHIGH;
+    DMA_Config(DMA1_Channel3, &DMA_ConfigStruct);
+    DMA_Disable(DMA1_Channel3);
+
+    SPI_I2S_EnableDMA(SPI1, SPI_I2S_DMA_REQ_TX);
     SPI_Enable(SPI1);
 }
 
@@ -191,17 +207,16 @@ void Lcd_SendData16(uint16_t data)
 
 void Lcd_SendDatas(uint8_t *data, uint32_t length)
 {
-    uint32_t i;
-
     LCD_DC_DATA();
     LCD_CS_LOW();
 
-    while(SPI_I2S_ReadStatusFlag(SPI1, SPI_FLAG_TXBE) == RESET);
-    for(i = 0; i < length; i++)
-    {
-        SPI1->DATA = data[i];
-        while(SPI_I2S_ReadStatusFlag(SPI1, SPI_FLAG_TXBE) == RESET);
-    }
+    DMA1_Channel3->CHCFG_B.CHEN = DISABLE;
+    DMA1_Channel3->CHNDATA = length;
+    DMA1_Channel3->CHPADDR = (uint32_t)data;
+    DMA1_Channel3->CHCFG_B.CHEN = ENABLE;
+
+    while(DMA_ReadStatusFlag(DMA2_FLAG_TC3) == RESET);
+    DMA_ClearStatusFlag(DMA2_FLAG_TC3);
  
     LCD_CS_HIGH();
 }
