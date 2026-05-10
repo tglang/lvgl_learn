@@ -45,7 +45,7 @@ void spi_config(void);
 void lcd_gpio_config(void);
 void Lcd_SendData8(uint8_t data);
 void Lcd_SendData16(uint16_t data);
-void Lcd_SendDatas(uint8_t *data, uint32_t length);
+void Lcd_SendDatas(void *data, uint32_t length);
 void Lcd_SendCMD(uint8_t cmd);
 void LCD_Address_Set(u16 x1,u16 y1,u16 x2,u16 y2);
 void LCD_Clear(u16 Color);

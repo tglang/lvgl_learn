@@ -16,8 +16,6 @@ int main(void)
     lv_init();
     lv_port_disp_init();
 
-//    LCD_ShowString(10,35,"2.4 TFT SPI 240*320",RED);
-
     scr = lv_scr_act(); // 创建屏幕
     // 设置白色背景
     lv_obj_set_style_bg_color(scr, lv_color_white(), LV_PART_MAIN); // 设置背景颜色为白色
@@ -57,46 +55,19 @@ int main(void)
             lv_task_handler();  // 处理LVGL任务
 
             KeyCtrl.KeyVaule = KeyScan();
-            if(KeyCtrl.KeyVaule == 1)
-            {
-                KeyCtrl.KeyTask = 1;
-            }
-            else if (KeyCtrl.KeyVaule == 2)
-            {
-                KeyCtrl.KeyTask = 2;
-                LCD_Clear(BLUE);
-            }
-            else if (KeyCtrl.KeyVaule == 3)
-            {
-                KeyCtrl.KeyTask = 3;
-                LCD_Clear(RED);
-            }
-            else if (KeyCtrl.KeyVaule == 4)
-            {
-                KeyCtrl.KeyTask = 4;
-                LCD_Clear(GREEN);
-            }
+            if(KeyCtrl.KeyVaule == 1)KeyCtrl.KeyTask = 1;
+            else if (KeyCtrl.KeyVaule == 2)KeyCtrl.KeyTask = 2;
+            else if (KeyCtrl.KeyVaule == 3)KeyCtrl.KeyTask = 3;
+            else if (KeyCtrl.KeyVaule == 4)KeyCtrl.KeyTask = 4;
         }
 
         if(TimerCtrl.Flag_128ms)
         {
             TimerCtrl.Flag_128ms = 0;
             if(KeyCtrl.KeyTask == 1)LED1_TOGGLE();
-            if (KeyCtrl.KeyTask == 2)
-            {
-                LED1_TOGGLE();
-                
-            }
-            else if (KeyCtrl.KeyTask == 3)
-            {
-                LED2_TOGGLE();
-                
-            }
-            else if (KeyCtrl.KeyTask == 4)
-            {
-                LED3_TOGGLE();
-            }
-
+            if (KeyCtrl.KeyTask == 2)LED1_TOGGLE();
+            else if (KeyCtrl.KeyTask == 3)LED2_TOGGLE();
+            else if (KeyCtrl.KeyTask == 4)LED3_TOGGLE();
         }
 
         if(TimerCtrl.Flag_1024ms)
@@ -104,7 +75,6 @@ int main(void)
             TimerCtrl.Flag_1024ms = 0;
 
             
-
         }
     }
 }

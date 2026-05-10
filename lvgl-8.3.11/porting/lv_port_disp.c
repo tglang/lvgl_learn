@@ -164,40 +164,25 @@ void disp_disable_update(void)
  *'lv_disp_flush_ready()' has to be called when finished.*/
 static void disp_flush(lv_disp_drv_t * disp_drv, const lv_area_t * area, lv_color_t * color_p)
 {
-    if(disp_flush_enabled) {
-        /*The most simple case (but also the slowest) to put all pixels to the screen one-by-one*/
+    // if(disp_flush_enabled) {
+    //     /*The most simple case (but also the slowest) to put all pixels to the screen one-by-one*/
 
-        int32_t x;
-        int32_t y;
-        for(y = area->y1; y <= area->y2; y++) {
-            for(x = area->x1; x <= area->x2; x++) {
-                /*Put a pixel to the display. For example:*/
-                /*put_px(x, y, *color_p)*/
-                LCD_DrawPoint(x, y, color_p->full);
-                color_p++;
-            }
-        }
-    }
+    //     int32_t x;
+    //     int32_t y;
+    //     for(y = area->y1; y <= area->y2; y++) {
+    //         for(x = area->x1; x <= area->x2; x++) {
+    //             /*Put a pixel to the display. For example:*/
+    //             /*put_px(x, y, *color_p)*/
+    //             LCD_DrawPoint(x, y, color_p->full);
+    //             color_p++;
+    //         }
+    //     }
+    // }
 
-    // uint32_t buffer_size = (area->x2 - area->x1 + 1) * (area->y2 - area->y1 + 1);
+    uint32_t buffer_size = (area->x2 - area->x1 + 1) * (area->y2 - area->y1 + 1);
 
-    // LCD_Address_Set(area->x1, area->y1, area->x2, area->y2);
-
-    // //Lcd_SendDatas(color_p, buffer_size * 2);
-
-    // LCD_DC_DATA();
-    // LCD_CS_LOW();
-
-    // DMA1_Channel3->CHCFG_B.CHEN = DISABLE;
-    // DMA1_Channel3->CHNDATA = buffer_size * 2;
-    // DMA1_Channel3->CHPADDR = (uint32_t)color_p;
-    // DMA1_Channel3->CHCFG_B.CHEN = ENABLE;
-
-    // while(DMA_ReadStatusFlag(DMA1_FLAG_TC3) == RESET);
-    // DMA_ClearStatusFlag(DMA1_FLAG_TC3);
- 
-    // LCD_CS_HIGH();
-
+    LCD_Address_Set(area->x1, area->y1, area->x2, area->y2);
+    Lcd_SendDatas((void *)color_p, buffer_size * 2);
 
     /*IMPORTANT!!!
      *Inform the graphics library that you are ready with the flushing*/

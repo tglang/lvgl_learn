@@ -143,6 +143,8 @@ void spi_config(void)
     DMA_Config(DMA1_Channel3, &DMA_ConfigStruct);
     DMA_Disable(DMA1_Channel3);
 
+    DMA_ClearStatusFlag(DMA1_FLAG_TC3);
+
     SPI_I2S_EnableDMA(SPI1, SPI_I2S_DMA_REQ_TX);
     SPI_Enable(SPI1);
 }
@@ -205,18 +207,18 @@ void Lcd_SendData16(uint16_t data)
     LCD_CS_HIGH();
 }
 
-void Lcd_SendDatas(uint8_t *data, uint32_t length)
+void Lcd_SendDatas(void *data, uint32_t length)
 {
     LCD_DC_DATA();
     LCD_CS_LOW();
 
     DMA1_Channel3->CHCFG_B.CHEN = DISABLE;
     DMA1_Channel3->CHNDATA = length;
-    DMA1_Channel3->CHPADDR = (uint32_t)data;
+    DMA1_Channel3->CHMADDR = (uint32_t)data;
     DMA1_Channel3->CHCFG_B.CHEN = ENABLE;
 
-    while(DMA_ReadStatusFlag(DMA2_FLAG_TC3) == RESET);
-    DMA_ClearStatusFlag(DMA2_FLAG_TC3);
+    while(DMA_ReadStatusFlag(DMA1_FLAG_TC3) == RESET);
+    DMA_ClearStatusFlag(DMA1_FLAG_TC3);
  
     LCD_CS_HIGH();
 }
