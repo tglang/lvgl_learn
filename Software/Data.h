@@ -32,6 +32,7 @@ typedef struct
     uint16_t Counts;
     uint8_t  Flag_1ms;
     uint8_t  Flag_8ms;
+    uint8_t  Flag_16ms;
     uint8_t  Flag_128ms;
     uint8_t  Flag_1024ms;
 }TimerCtrl_t;

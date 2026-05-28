@@ -26,6 +26,7 @@
 
 #include "Software.h"
 #include "Data.h"
+#include "lvgl_func.h"
 
 void Hardware_initialize(void);
 
