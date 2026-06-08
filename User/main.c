@@ -34,7 +34,7 @@ int main(void)
             TimerCtrl.Flag_16ms = 0;
 
             lv_timer_handler(); 
-            
+
         }
 
         if(TimerCtrl.Flag_128ms)
